@@ -1,3 +1,4 @@
+import Image from "next/image";
 export default function About() {
   const skills = [
     {
@@ -101,9 +102,11 @@ export default function About() {
               rel="noopener noreferrer"
               className="flex flex-col items-center p-4 border rounded-lg shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 hover:shadow-lg transition"
             >
-              <img
+              <Image
                 src={skill.logo}
                 alt={skill.name}
+                width={48}
+                height={48}
                 className="h-12 w-12 mb-3 object-contain"
                 title={skill.link}
               />

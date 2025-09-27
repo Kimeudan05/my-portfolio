@@ -1,6 +1,6 @@
 import Hero from "../components/Hero";
 import About from "../components/About";
-import Skills from "../components/Skills";
+// import Skills from "../components/Skills";
 import DataProjects from "./data-projects/page";
 import WebProjects from "./web-projects/page";
 import Services from "./services/page";

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { User } from "@supabase/supabase-js";
 
 type Message = {
   id: string;
@@ -13,7 +14,7 @@ type Message = {
 export default function AdminMessages() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   // Check session on load
   useEffect(() => {

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { notFound, useParams } from "next/navigation";
 import { projects } from "@/lib/projects";
@@ -12,41 +12,37 @@ export default function ProjectPage() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
-  if (!project) {
-    return notFound();
-  }
+  // Previous image handler
+  const prevImage = useCallback(() => {
+    if (lightboxIndex !== null && project?.images.length) {
+      setLightboxIndex(
+        (lightboxIndex - 1 + project.images.length) % project.images.length
+      );
+    }
+  }, [lightboxIndex, project?.images.length]);
+
+  // Next image handler
+  const nextImage = useCallback(() => {
+    if (lightboxIndex !== null && project?.images.length) {
+      setLightboxIndex((lightboxIndex + 1) % project.images.length);
+    }
+  }, [lightboxIndex, project?.images.length]);
 
   // Keyboard navigation
   useEffect(() => {
     if (lightboxIndex === null) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setLightboxIndex(null);
-      } else if (e.key === "ArrowLeft") {
-        prevImage();
-      } else if (e.key === "ArrowRight") {
-        nextImage();
-      }
+      if (e.key === "Escape") setLightboxIndex(null);
+      else if (e.key === "ArrowLeft") prevImage();
+      else if (e.key === "ArrowRight") nextImage();
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [lightboxIndex]);
+  }, [lightboxIndex, prevImage, nextImage]);
 
-  const prevImage = () => {
-    if (lightboxIndex !== null) {
-      setLightboxIndex(
-        (lightboxIndex - 1 + project.images.length) % project.images.length
-      );
-    }
-  };
-
-  const nextImage = () => {
-    if (lightboxIndex !== null) {
-      setLightboxIndex((lightboxIndex + 1) % project.images.length);
-    }
-  };
+  if (!project) return notFound();
 
   // Touch swipe detection
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -58,11 +54,8 @@ export default function ProjectPage() {
     const touchEnd = e.changedTouches[0].clientX;
     const diff = touchStart - touchEnd;
 
-    if (diff > 50) {
-      nextImage(); // swipe left
-    } else if (diff < -50) {
-      prevImage(); // swipe right
-    }
+    if (diff > 50) nextImage(); // swipe left
+    else if (diff < -50) prevImage(); // swipe right
 
     setTouchStart(null);
   };
